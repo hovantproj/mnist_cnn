@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 import torch.nn as nn
-import torch.optim
+import torch.optim as optim
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 
@@ -52,7 +52,35 @@ class CNNModel(nn.Module):
         self.layer1 = nn.Linear(784, 128)
         self.layer2 = nn.Linear(128, 10)
 
+        def forward(self, x):
+            # Standard process is conv then relu then pool
+            x = self.conv1(x)
+            x = self.relu(x)
+            x = self.pool(x)
 
-# Make the training function
+            x = self.conv2(x)
+            x = self.relu(x)
+            x = self.pool(x)
+
+            x = x.view(x.size(0), -1) # Flattening to ([batch size, flattened dimensions])
+            
+            x = self.relu(self.layer1(x))
+            x = self.dropout(x)
+            x = self.layer2(x)
+            return x
+
+model = CNNModel().to(device)
+print(model)
+
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=1e-3)
+
+def train():
+    model.train()
+    total_loss = 0.0
+    for images, labels in loader:
+        images, labels = images.to(device), labels.to(device)
+
 
 # Find loss and other stuff
+
